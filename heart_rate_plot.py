@@ -16,6 +16,7 @@ class DataGiver:
     def ram(self):
         return 40
 
+# OPENCV NOT WORKING WITH MATPLOTLIB WINDOW
 class data_plot():
     def __init__(self):
         # start collections with zeros
