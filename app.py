@@ -23,7 +23,7 @@ class App:
                                   self.faceLockerComponent.get_locked_face(),
                                   self.faceLockerComponent.get_locked_forehead())
         self.scannerComponent.scan()
-
+        # TODO rescan option
 
 
 
