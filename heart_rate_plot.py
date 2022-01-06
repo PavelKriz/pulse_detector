@@ -46,7 +46,7 @@ class Plotter:
         self.graphs.get(graph_id).put(val)
 
     # Update new values in plot
-    def plot_graphs(self, label="plot"):
+    def plot_graphs(self, label="Plot"):
         self.plot = np.ones(self.plot.shape, self.plot.dtype) * 255
         self.__draw_plot(label)
 

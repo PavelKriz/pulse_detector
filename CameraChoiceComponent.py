@@ -67,6 +67,7 @@ class CameraChoiceComponent:
                     changed_camera = True
                     continue
 
+            frame = cv2.flip(frame, 1)
             self.__choose_camera_draw_text(frame)
             self.window.draw(frame)
 
@@ -74,7 +75,7 @@ class CameraChoiceComponent:
             if k % 256 == 27:
                 # ESC pressed
                 print("Escape hit, closing...")
-                cap.release()
+                self.cap.release()
                 cv2.destroyAllWindows()
                 exit(0)
             elif k % 256 == ord('n') or k % 256 == ord('N'):
