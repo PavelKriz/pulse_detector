@@ -1,4 +1,3 @@
-import cv2
 import Window
 import CameraChoiceComponent as ccp
 import FaceLockerComponent as flc
