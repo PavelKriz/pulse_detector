@@ -1,5 +1,8 @@
 import cv2
 import numpy as np
+import time
+import collections
+
 
 import Window
 import copy
@@ -13,6 +16,10 @@ class ScannerComponent:
         self.forehead = False
         self.plotter = hrp.Plotter(1200, 350, 3)
         self.plotter.add_graph(0, "Avg Vals", (0, 255, 0))
+        self.t0 = time.time()
+        self.bufferSize = 250
+        self.timeBuffer = collections.deque([])
+        self.dataBuffer = collections.deque([])
 
     def set(self, cap, face, forehead):
         self.cap = cap
@@ -37,6 +44,12 @@ class ScannerComponent:
             foreheadROI[:, :, 2] = 0
 
             average = np.average(foreheadROI)
+            self.dataBuffer.append(average)
+            self.timeBuffer.append(time.time() - self.t0)
+            if len(self.dataBuffer) > self.bufferSize:
+                self.dataBuffer.popleft()
+                self.timeBuffer.popleft()
+
             print(average)
             self.plotter.update(0, average)
             #foreheadGreenROI = foreheadColorROI[:, :, 1]
@@ -44,6 +57,7 @@ class ScannerComponent:
 
             x, y, w, h = self.face
             cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+            cv2.dft()
 
 
             self.window.draw(frame)
