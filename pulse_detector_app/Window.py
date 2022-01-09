@@ -1,6 +1,5 @@
 import cv2
 
-
 class Window:
     def __init__(self, label):
         self.label = label

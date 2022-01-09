@@ -1,13 +1,14 @@
-import Window
+import pulse_detector_app as pda
 import cv2
-import CameraChoiceComponent as ccp
-import FaceLockerComponent as flc
-import ScannerComponent as sc
+from pulse_detector_app import Window
+from pulse_detector_app import CameraChoiceComponent as ccp
+from pulse_detector_app import FaceLockerComponent as flc
+from pulse_detector_app import ScannerComponent as sc
 
 
 class App:
     def __init__(self):
-        self.main_window = Window.Window('Pulse detector')
+        self.main_window = pda.Window.Window('Pulse detector')
         self.cameraChoiceComponent = ccp.CameraChoiceComponent(self.main_window)
         self.faceLockerComponent = flc.FaceLockerComponent(self.main_window)
         self.scannerComponent = sc.ScannerComponent(self.main_window)

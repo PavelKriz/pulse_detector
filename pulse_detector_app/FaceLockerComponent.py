@@ -1,5 +1,4 @@
 import cv2
-import Window
 import copy
 
 
@@ -8,7 +7,7 @@ class FaceLockerComponent:
         self.window = window
         self.cap = False
         # Load the cascade
-        self.face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml')
+        self.face_cascade = cv2.CascadeClassifier('pulse_detector_app/haarcascade_frontalface_alt.xml')
         self.locked_face = (0, 0, 0, 0)
         self.face_was_locked = False
         self.font = cv2.FONT_HERSHEY_SIMPLEX

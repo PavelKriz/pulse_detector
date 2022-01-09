@@ -1,10 +1,7 @@
-import collections
 import cv2
 import numpy as np
 from numpy import interp
-import sys
-import random
-import Window
+from pulse_detector_app import Window
 
 
 class BPMPlotterWrapper:

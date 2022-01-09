@@ -2,12 +2,8 @@ import cv2
 import numpy as np
 import time
 import collections
-import BPMPlotter
+from pulse_detector_app import BPMPlotter
 
-
-import Window
-import copy
-import heart_rate_plot as hrp
 
 class BPMData:
     def __init__(self, size=250):
@@ -99,8 +95,6 @@ class ScannerComponent:
         self.cap = False
         self.face = False
         self.forehead = False
-        self.plotter = hrp.Plotter(1200, 350, int(1200 / self.bufferSize))
-        self.plotter.add_graph(0, "Avg Vals", (0, 255, 0))
         self.bpm_data = BPMData()
         self.font = cv2.FONT_HERSHEY_SIMPLEX
         self.text_color = (255, 255, 255)
@@ -155,8 +149,6 @@ class ScannerComponent:
 
             average = np.average(foreheadROI)
 
-            self.plotter.update(0, average)
-            #foreheadGreenROI = foreheadColorROI[:, :, 1]
             self.bpm_data.put(average)
             self.bpm_data.analyze()
             self.bpm_data.plot()
@@ -167,7 +159,6 @@ class ScannerComponent:
             self.__scan_face_draw_text(frame)
             self.window.draw(frame)
 
-            self.plotter.plot_graphs()
 
             k = cv2.waitKey(1)
 
