@@ -15,6 +15,7 @@ class ScannerComponent:
         self.font = cv2.FONT_HERSHEY_SIMPLEX
         self.text_color = (255, 255, 255)
         self.background_color = (20, 20, 20)
+        self.flip = False
 
     def __scan_face_draw_text(self, frame):
         select_camera_str = "To lock new face press: N"
@@ -55,10 +56,11 @@ class ScannerComponent:
                     self.font,
                     font_scale, self.text_color, 1)
 
-    def set(self, cap, face, forehead):
+    def set(self, cap, face, forehead, flip):
         self.cap = cap
         self.face = face
         self.forehead = forehead
+        self.flip = flip
 
     def scan(self):
         self.__reset()
@@ -72,7 +74,8 @@ class ScannerComponent:
                 print("failed to grab frame")
                 return
 
-            frame = cv2.flip(frame, 1)
+            if self.flip:
+                frame = cv2.flip(frame, 1)
 
             fx, fy, fw, fh = self.forehead
             foreheadROI = frame[fy:fy + fh, fx:fx + fw, 0:3]

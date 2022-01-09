@@ -19,7 +19,7 @@ class App:
             self.__clear()
             return
 
-        self.faceLockerComponent.set_cap(self.cameraChoiceComponent.get_cap())
+        self.faceLockerComponent.set(self.cameraChoiceComponent.get_cap(), self.cameraChoiceComponent.flip)
         while True:
             self.faceLockerComponent.face_was_locked = False
             while not self.faceLockerComponent.face_was_locked:
@@ -30,7 +30,8 @@ class App:
 
             self.scannerComponent.set(self.cameraChoiceComponent.get_cap(),
                                       self.faceLockerComponent.get_locked_face(),
-                                      self.faceLockerComponent.get_locked_forehead())
+                                      self.faceLockerComponent.get_locked_forehead(),
+                                      self.cameraChoiceComponent.flip)
             ret = self.scannerComponent.scan()
             if ret == 0:
                 self.__clear()

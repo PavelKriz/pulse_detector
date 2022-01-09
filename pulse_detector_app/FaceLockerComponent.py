@@ -14,6 +14,7 @@ class FaceLockerComponent:
         self.text_color = (255, 255, 255)
         self.background_color = (20, 20, 20)
         self.forehead = (1,1,1,1)
+        self.flip = False
 
     def __lock_face_draw_text(self, frame):
         select_camera_str = "To lock the face press: space"
@@ -52,8 +53,9 @@ class FaceLockerComponent:
         x, y, w, h = rectangle
         cv2.rectangle(frame, (x, y), (x + w, y + h), col, 3)
 
-    def set_cap(self, cap):
+    def set(self, cap, flip):
         self.cap = cap
+        self.flip = flip
 
     def __real_run(self):
         if not self.cap:
@@ -62,7 +64,8 @@ class FaceLockerComponent:
         if not ret:
             print("failed to grab frame")
             return False
-        frame = cv2.flip(frame, 1)
+        if self.flip:
+            frame = cv2.flip(frame, 1)
         drawFrame = copy.deepcopy(frame)
         frame_grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         cv2.equalizeHist(frame_grey, frame_grey)
@@ -99,6 +102,7 @@ class FaceLockerComponent:
             # ESC pressed
             print("Escape hit, closing...")
             return False
+
         if k % 256 == 32:
             # space pressed
             if len(faces) > 0:

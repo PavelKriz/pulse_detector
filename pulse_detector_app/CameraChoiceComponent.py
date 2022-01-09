@@ -13,6 +13,7 @@ class CameraChoiceComponent:
         self.text_color = (255, 255, 255)
         self.background_color = (20, 20, 20)
         self.cap = False
+        self.flip = False
 
     def __choose_camera_draw_text(self, frame):
         next_camera_str = "For next camera press: N"
@@ -21,6 +22,7 @@ class CameraChoiceComponent:
         used_height = config.RESOLUTIONS[config.USED_RESOLUTION_INDEX]['height']
         camera_res_str = "Webcam resolution is: %d x %d" % (used_width, used_height)
         select_camera_str = "To select this camera press: SPACE"
+        toggle_mirror_str = "To toggle mirror on/off the camera press: F"
         end_app_str = "To quit press: ESC"
 
         offset = 5
@@ -29,11 +31,12 @@ class CameraChoiceComponent:
         text_size2 = cv2.getTextSize(next_camera_res_str, self.font, font_scale, 1)[0]
         text_size3 = cv2.getTextSize(camera_res_str, self.font, font_scale, 1)[0]
         text_size4 = cv2.getTextSize(select_camera_str, self.font, font_scale, 1)[0]
-        text_size5 = cv2.getTextSize(end_app_str, self.font, font_scale, 1)[0]
-        max_text_size = [max(text_size1[0], text_size3[0], text_size2[0], text_size4[0], text_size5[0]),
-                     max(text_size1[1], text_size3[1], text_size2[1], text_size4[1], text_size5[1])]
+        text_size5 = cv2.getTextSize(toggle_mirror_str, self.font, font_scale, 1)[0]
+        text_size6 = cv2.getTextSize(end_app_str, self.font, font_scale, 1)[0]
+        max_text_size = [max(text_size1[0], text_size3[0], text_size2[0], text_size4[0], text_size5[0], text_size6[0]),
+                     max(text_size1[1], text_size3[1], text_size2[1], text_size4[1], text_size5[1], text_size6[1])]
 
-        text_rectangle_size = [max_text_size[0] + 2 * offset, max_text_size[1] * 5 + offset * 6 ]
+        text_rectangle_size = [max_text_size[0] + 2 * offset, max_text_size[1] * 6 + offset * 7 ]
         cv2.rectangle(frame, (0, 0), text_rectangle_size, self.background_color, -1)
 
         text_start = [ offset, max_text_size [1] + offset]
@@ -53,6 +56,11 @@ class CameraChoiceComponent:
 
         text_start[1] += max_text_size[1] + offset
         cv2.putText(frame, select_camera_str, text_start,
+                    self.font,
+                    font_scale, self.text_color, 1)
+
+        text_start[1] += max_text_size[1] + offset
+        cv2.putText(frame, toggle_mirror_str, text_start,
                     self.font,
                     font_scale, self.text_color, 1)
 
@@ -86,8 +94,9 @@ class CameraChoiceComponent:
                     index = 0
                     changed_camera = True
                     continue
+            if self.flip:
+                frame = cv2.flip(frame, 1)
 
-            frame = cv2.flip(frame, 1)
             self.__choose_camera_draw_text(frame)
             self.window.draw(frame)
 
@@ -106,6 +115,12 @@ class CameraChoiceComponent:
                 # r or R pressed
                 changed_camera = True
                 config.USED_RESOLUTION_INDEX = (1 + config.USED_RESOLUTION_INDEX) % len(config.RESOLUTIONS)
+            elif k % 256 == ord('f') or k % 256 == ord('F'):
+                # f or F pressed
+                if self.flip:
+                    self.flip = False
+                else:
+                    self.flip = True
             elif k % 256 == 32:
                 # space was pressed
                 self.camera_index = index
