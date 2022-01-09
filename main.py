@@ -10,6 +10,8 @@ import app
 app = app.App()
 app.run()
 
+
+'''
 def get_subface_coord(face_rect, fh_x, fh_y, fh_w, fh_h):
     x, y, w, h = face_rect
     return [int(x + w * fh_x - (w * fh_w / 2.0)),
@@ -111,3 +113,5 @@ while(True):
 
 cap.release()
 cv2.destroyAllWindows()
+
+'''

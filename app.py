@@ -1,4 +1,5 @@
 import Window
+import cv2
 import CameraChoiceComponent as ccp
 import FaceLockerComponent as flc
 import ScannerComponent as sc
@@ -12,18 +13,33 @@ class App:
         self.scannerComponent = sc.ScannerComponent(self.main_window)
 
     def run(self):
-        self.cameraChoiceComponent.choose_camera()
+        ret = self.cameraChoiceComponent.choose_camera()
+        if ret == 0:
+            self.__clear()
+            return
+
         self.faceLockerComponent.set_cap(self.cameraChoiceComponent.get_cap())
-        self.faceLockerComponent.run()
-        if not self.faceLockerComponent.face_was_locked:
-            print("error in face locking")
-            exit(125)
-        self.scannerComponent.set(self.cameraChoiceComponent.get_cap(),
-                                  self.faceLockerComponent.get_locked_face(),
-                                  self.faceLockerComponent.get_locked_forehead())
-        self.scannerComponent.scan()
+        while True:
+            self.faceLockerComponent.face_was_locked = False
+            while not self.faceLockerComponent.face_was_locked:
+                ret = self.faceLockerComponent.run()
+                if ret == 0:
+                    self.__clear()
+                    return
+
+            self.scannerComponent.set(self.cameraChoiceComponent.get_cap(),
+                                      self.faceLockerComponent.get_locked_face(),
+                                      self.faceLockerComponent.get_locked_forehead())
+            ret = self.scannerComponent.scan()
+            if ret == 0:
+                self.__clear()
+                return
+
         # TODO rescan option
 
+    def __clear(self):
+        self.cameraChoiceComponent.get_cap().release()
+        cv2.destroyAllWindows()
 
 
 

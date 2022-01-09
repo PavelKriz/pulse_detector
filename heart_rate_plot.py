@@ -9,7 +9,7 @@ import random
 class GraphData:
     def __init__(self, x_size, label, color):
         self.x_size = x_size
-        self.data = collections.deque(np.zeros(2, dtype=int))
+        self.data = collections.deque(np.zeros(0, dtype=int))
         self.label = label
         self.color = color
         self.max_val = 0
@@ -21,7 +21,6 @@ class GraphData:
         self.min_val = min(self.min_val, int(val))
         while len(self.data) > self.x_size:
             self.data.popleft()
-
 
 # Plot values in opencv program
 class Plotter:
@@ -69,7 +68,7 @@ class Plotter:
                                      gd.color, 1)
 
         cv2.imshow(label, self.plot)
-        cv2.waitKey(30)
+        #cv2.waitKey(1)
 
 
 '''

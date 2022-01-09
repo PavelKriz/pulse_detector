@@ -14,6 +14,7 @@ class FaceLockerComponent:
         self.font = cv2.FONT_HERSHEY_SIMPLEX
         self.text_color = (255, 255, 255)
         self.background_color = (20, 20, 20)
+        self.forehead = (1,1,1,1)
 
     def __lock_face_draw_text(self, frame):
         select_camera_str = "To lock the face press: space"
@@ -77,10 +78,13 @@ class FaceLockerComponent:
                 continue
 
             cv2.rectangle(drawFrame, (x, y), (x + w, y + h), (255, 0, 0), 2)
-            forehead1 = self.get_subface_coord([x, y, w, h], 0.5, 0.18, 0.25, 0.15)
+            # original
+            # forehead1 = self.get_subface_coord([x, y, w, h], 0.5, 0.18, 0.25, 0.15)
+            # experimental
+            self.forehead = self.get_subface_coord([x, y, w, h], 0.5, 0.14, 0.3, 0.2)
 
             # draw rectangle
-            self.draw_rectangle(drawFrame, forehead1)
+            self.draw_rectangle(drawFrame, self.forehead)
 
             # face rectangle of interest
             faceROI = frame_grey[y:y + h, x:x + w]
@@ -119,6 +123,6 @@ class FaceLockerComponent:
 
     def get_locked_forehead(self):
         if self.face_was_locked:
-            return self.get_subface_coord(self.locked_face, 0.5, 0.18, 0.25, 0.15)
+            return self.forehead
         return
 
