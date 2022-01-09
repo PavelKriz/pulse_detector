@@ -15,6 +15,9 @@ class CameraChoiceComponent:
     def __choose_camera_draw_text(self, frame):
         next_camera_str = "For next camera press: N"
         next_camera_res_str = "For webcam resolution change press: R"
+        used_width = config.RESOLUTIONS[config.USED_RESOLUTION_INDEX]['width']
+        used_height = config.RESOLUTIONS[config.USED_RESOLUTION_INDEX]['height']
+        camera_res_str = "Webcam resolution is: %d x %d" % (used_width, used_height)
         select_camera_str = "To select this camera press: SPACE"
         end_app_str = "To quit press: ESC"
 
@@ -22,12 +25,13 @@ class CameraChoiceComponent:
         font_scale = config.RESOLUTIONS[config.USED_RESOLUTION_INDEX]['font_scale']
         text_size1 = cv2.getTextSize(next_camera_str, self.font, font_scale, 1)[0]
         text_size2 = cv2.getTextSize(next_camera_res_str, self.font, font_scale, 1)[0]
-        text_size3 = cv2.getTextSize(select_camera_str, self.font, font_scale, 1)[0]
-        text_size4 = cv2.getTextSize(end_app_str, self.font, font_scale, 1)[0]
-        max_text_size = [max(text_size1[0], text_size3[0], text_size2[0], text_size4[0]),
-                     max(text_size1[1], text_size3[1], text_size2[1], text_size4[1])]
+        text_size3 = cv2.getTextSize(camera_res_str, self.font, font_scale, 1)[0]
+        text_size4 = cv2.getTextSize(select_camera_str, self.font, font_scale, 1)[0]
+        text_size5 = cv2.getTextSize(end_app_str, self.font, font_scale, 1)[0]
+        max_text_size = [max(text_size1[0], text_size3[0], text_size2[0], text_size4[0], text_size5[0]),
+                     max(text_size1[1], text_size3[1], text_size2[1], text_size4[1], text_size5[1])]
 
-        text_rectangle_size = [max_text_size[0] + 2 * offset, max_text_size[1] * 4 + offset * 5 ]
+        text_rectangle_size = [max_text_size[0] + 2 * offset, max_text_size[1] * 5 + offset * 6 ]
         cv2.rectangle(frame, (0, 0), text_rectangle_size, self.background_color, -1)
 
         text_start = [ offset, max_text_size [1] + offset]
@@ -37,6 +41,11 @@ class CameraChoiceComponent:
 
         text_start[1] += max_text_size[1] + offset
         cv2.putText(frame, next_camera_res_str, text_start,
+                    self.font,
+                    font_scale, self.text_color, 1)
+
+        text_start[1] += max_text_size[1] + offset
+        cv2.putText(frame, camera_res_str, text_start,
                     self.font,
                     font_scale, self.text_color, 1)
 
