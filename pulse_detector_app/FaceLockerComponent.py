@@ -1,6 +1,6 @@
 import cv2
 import copy
-
+from pulse_detector_app import config
 
 class FaceLockerComponent:
     def __init__(self, window):
@@ -20,8 +20,9 @@ class FaceLockerComponent:
         end_app_str = "To quit press: ESC"
 
         offset = 5
-        text_size1 = cv2.getTextSize(select_camera_str, self.font, 1.0, 1)[0]
-        text_size2 = cv2.getTextSize(end_app_str, self.font, 1.0, 1)[0]
+        font_scale = config.RESOLUTIONS[config.USED_RESOLUTION_INDEX]['font_scale']
+        text_size1 = cv2.getTextSize(select_camera_str, self.font, font_scale, 1)[0]
+        text_size2 = cv2.getTextSize(end_app_str, self.font, font_scale, 1)[0]
         max_text_size = [max(text_size1[0], text_size2[0]),
                      max(text_size1[1], text_size2[1])]
 
@@ -31,12 +32,12 @@ class FaceLockerComponent:
         text_start = [ offset, max_text_size [1] + offset]
         cv2.putText(frame, select_camera_str, text_start,
                     self.font,
-                    1.0, self.text_color, 1)
+                    font_scale, self.text_color, 1)
 
         text_start[1] += max_text_size[1] + offset
         cv2.putText(frame, end_app_str, text_start,
                     self.font,
-                    1.0, self.text_color, 1)
+                    font_scale, self.text_color, 1)
 
     @staticmethod
     def get_subface_coord(face_rect, fh_x, fh_y, fh_w, fh_h):

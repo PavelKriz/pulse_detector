@@ -9,23 +9,24 @@ class BPMPlotterWrapper:
         self.width = width
         self.height = height
         self.plotter = BPMPlotter()
-        self.window = Window.Window("Plot2")
-        self.frame = np.ones((height, width, 3)) * 255
+        self.window = Window.Window("Pulse plot")
+        self.frame = np.ones((height, width, 3)) * (20 / 255)
 
     def plot(self, bpm, raw_data, amplitudes, frequencies):
         self.plotter.font_scale = 1.0
-        self.frame = np.ones((self.height, self.width, 3)) * 255
+        self.frame = np.ones((self.height, self.width, 3)) * (20 / 255)
         self.plotter.plot(self.frame, bpm, raw_data, amplitudes, frequencies)
         self.window.draw(self.frame)
 
 
 # Plot values in opencv program
 class BPMPlotter:
-    def __init__(self, color=(255, 0, 0), data_relative_height=0.4, freq_ampl_relative_height=0.4):
+    def __init__(self, color=(240, 240, 240)):
         self.color = color
-        self.data_relative_height = data_relative_height
-        self.freq_ampl_relative_height = freq_ampl_relative_height
-        self.freq_ampl_legend_relative_height = 0.09
+        self.raw_data_relative_height = 0.3
+        self.raw_data_legend__relative_height = 0.1
+        self.freq_ampl_relative_height = 0.3
+        self.freq_ampl_legend_relative_height = 0.18
         self.legend_relative_height = 0.09
         self.font = cv2.FONT_HERSHEY_SIMPLEX
         self.font_scale = 1.0
@@ -37,51 +38,74 @@ class BPMPlotter:
         height = len(frame_to_draw)
         width = len(frame_to_draw[0])
 
-        raw_data_bottom = int(height * self.data_relative_height)
+        # draw raw data
+        raw_data_bottom = int(height * self.raw_data_relative_height)
         raw_step_size = width / len(raw_data)
-
-        freq_ampl_top = raw_data_bottom
-        freq_ampl_bottom = raw_data_bottom + int(height * self.freq_ampl_relative_height)
-
-        min_ampl = min(amplitudes)
-        max_ampl = max(amplitudes)
-
-        min_freq = frequencies[0]
-        min_freq_str = "%0.00f bpm" % min_freq
-        max_freq = frequencies[-1]
-        max_freq_str = "%0.00f bpm" % max_freq
-        freq_step_size = int(width / len(frequencies))
-
-        freq_ampl_legend_top = freq_ampl_bottom
-        freq_ampl_legend_bottom = freq_ampl_legend_top + int(height * self.freq_ampl_legend_relative_height)
-        cv2.putText(frame_to_draw, min_freq_str, (5, freq_ampl_legend_bottom),
-                    self.font,
-                    self.font_scale, self.color, 1)
-
-        text_size = cv2.getTextSize(max_freq_str, self.font, 1.0, 1)[0]
-        cv2.putText(frame_to_draw, max_freq_str, (width - text_size[0] - 5, freq_ampl_legend_bottom),
-                    self.font,
-                    self.font_scale, self.color, 1)
-
-        # bpm
-        legend_top = freq_ampl_legend_bottom
-        legend_bottom = legend_top + int(height * self.legend_relative_height)
-        bpm_str = "Your pulse is: %d bpm" % bpm
-        cv2.putText(frame_to_draw, bpm_str, (5, legend_bottom),
-                    self.font,
-                    self.font_scale, self.color, 1)
-
-        for i in range(len(amplitudes) -1):
-            first = int(interp(amplitudes[i], [min_ampl, max_ampl], [freq_ampl_top, freq_ampl_bottom]))
-            second = int(interp(amplitudes[i + 1], [min_ampl, max_ampl], [freq_ampl_top, freq_ampl_bottom]))
-            cv2.line(frame_to_draw, (i * freq_step_size, freq_ampl_top + int(freq_ampl_bottom - first)),
-                     ((i + 1) * freq_step_size, freq_ampl_top + int(freq_ampl_bottom - second)), self.color, 1)
 
         for i in range(len(raw_data) - 1):
             first = int(interp(raw_data[i], [min_val, max_val], [0, raw_data_bottom]))
             second = int(interp(raw_data[i + 1], [min_val, max_val], [0, raw_data_bottom]))
             cv2.line(frame_to_draw, (int(i * raw_step_size), int(raw_data_bottom - first)),
                      (int((i + 1) * raw_step_size), int(raw_data_bottom - second)), self.color, 1)
+
+        # draw raw data legend
+        raw_data_legend_top = raw_data_bottom
+        raw_data_legend_bottom = raw_data_bottom + int(height * self.raw_data_legend__relative_height)
+        cv2.putText(frame_to_draw, "Record of measured data from your face.",
+                    (5, raw_data_legend_bottom - 5),
+                    self.font,
+                    self.font_scale * 0.6, self.color, 1)
+        cv2.line(frame_to_draw, (0, raw_data_legend_bottom), (width, raw_data_legend_bottom), self.color, 1)
+
+        # draw amplitudes for the interesting frequencies
+        freq_ampl_top = raw_data_legend_bottom
+        freq_ampl_bottom = freq_ampl_top + int(height * self.freq_ampl_relative_height)
+
+        min_ampl = min(amplitudes)
+        max_ampl = max(amplitudes)
+        freq_step_size = int(width / len(frequencies))
+        for i in range(len(amplitudes) -1):
+            first = int(interp(amplitudes[i], [min_ampl, max_ampl], [freq_ampl_top, freq_ampl_bottom]))
+            second = int(interp(amplitudes[i + 1], [min_ampl, max_ampl], [freq_ampl_top, freq_ampl_bottom]))
+            cv2.line(frame_to_draw, (i * freq_step_size, freq_ampl_top + int(freq_ampl_bottom - first)),
+                     ((i + 1) * freq_step_size, freq_ampl_top + int(freq_ampl_bottom - second)), self.color, 1)
+
+        # draw the axis
+        freq_ampl_legend_top = freq_ampl_bottom
+        freq_ampl_legend_bottom = freq_ampl_legend_top + int(height * self.freq_ampl_legend_relative_height / 2)
+
+        min_freq = frequencies[0]
+        max_freq = frequencies[-1]
+        freq_legend_step_size = (max_freq - min_freq) / 6
+        freq_i = min_freq
+        freq_legend_step_size_pixels = width / 7
+        width_i = 0
+        for i in range(7):
+            text_str = "%d" % round(freq_i)
+            cv2.putText(frame_to_draw, text_str, (int(width_i), freq_ampl_legend_bottom),
+                        self.font,
+                        self.font_scale * 0.6, self.color, 1)
+            freq_i += freq_legend_step_size
+            width_i += freq_legend_step_size_pixels
+
+        # draw legend of amplitude of given frequencies graph
+        freq_ampl_legend_bottom2 = freq_ampl_legend_bottom + int(height * self.freq_ampl_legend_relative_height / 2)
+        cv2.putText(frame_to_draw, "The estimated \"probability\" of the bpm to be the correct one",
+                    (5, freq_ampl_legend_bottom2 - 5),
+                    self.font,
+                    self.font_scale * 0.6, self.color, 1)
+        cv2.line(frame_to_draw, (0, freq_ampl_legend_bottom2), (width, freq_ampl_legend_bottom2), self.color, 1)
+
+
+        # bpm
+        legend_top = freq_ampl_legend_bottom2
+        legend_bottom = legend_top + int(height * self.legend_relative_height)
+        bpm_str = "Your pulse estimation is: %d bpm" % bpm
+        cv2.putText(frame_to_draw, bpm_str, (5, legend_bottom),
+                    self.font,
+                    self.font_scale, self.color, 1)
+
+
         return
 
     '''

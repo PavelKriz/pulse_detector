@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from pulse_detector_app import BPMData
+from pulse_detector_app import config
 
 
 class ScannerComponent:
@@ -20,8 +21,9 @@ class ScannerComponent:
         end_app_str = "To quit press: ESC"
 
         offset = 5
-        text_size1 = cv2.getTextSize(select_camera_str, self.font, 1.0, 1)[0]
-        text_size2 = cv2.getTextSize(end_app_str, self.font, 1.0, 1)[0]
+        font_scale = config.RESOLUTIONS[config.USED_RESOLUTION_INDEX]['font_scale']
+        text_size1 = cv2.getTextSize(select_camera_str, self.font, font_scale, 1)[0]
+        text_size2 = cv2.getTextSize(end_app_str, self.font, font_scale, 1)[0]
         max_text_size = [max(text_size1[0], text_size2[0]),
                      max(text_size1[1], text_size2[1])]
 
@@ -31,12 +33,27 @@ class ScannerComponent:
         text_start = [ offset, max_text_size [1] + offset]
         cv2.putText(frame, select_camera_str, text_start,
                     self.font,
-                    1.0, self.text_color, 1)
+                    font_scale, self.text_color, 1)
 
         text_start[1] += max_text_size[1] + offset
         cv2.putText(frame, end_app_str, text_start,
                     self.font,
-                    1.0, self.text_color, 1)
+                    font_scale, self.text_color, 1)
+
+    def __draw_bpm(self, frame):
+        font_scale = config.RESOLUTIONS[config.USED_RESOLUTION_INDEX]['font_scale']
+        x, y, w, h = self.forehead
+        text_str = "%d bpm" % self.bpm_data.bpm
+        text_size = np.array(cv2.getTextSize(text_str, self.font, font_scale, 1)[0])
+        text_rectangle_size = np.array(1.5 * text_size, dtype=int)
+        offset = np.array((text_rectangle_size - text_size)/2, dtype=int)
+        width_offset = 20
+        pt1 = (x + w + width_offset, y + int(h / 2 - text_rectangle_size[1] / 2))
+        pt2 = (pt1[0] + text_rectangle_size[0] + width_offset, pt1[1] + text_rectangle_size[1])
+        cv2.rectangle(frame, pt1, pt2, self.background_color, -1)
+        cv2.putText(frame, "%d bpm" % self.bpm_data.bpm, (pt1[0] + offset[0], pt2[1] - offset[1])  ,
+                    self.font,
+                    font_scale, self.text_color, 1)
 
     def set(self, cap, face, forehead):
         self.cap = cap
@@ -72,6 +89,7 @@ class ScannerComponent:
             cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
             self.__scan_face_draw_text(frame)
+            self.__draw_bpm(frame)
             self.window.draw(frame)
 
 
