@@ -1,4 +1,6 @@
 import cv2
+import numpy as np
+
 from pulse_detector_app import config
 
 
@@ -77,8 +79,9 @@ class CameraChoiceComponent:
             ret, frame = self.cap.read()
             if not ret:
                 if index == 0:
-                    print("Any camera wasn't found!")
-                    exit(111)
+                    frame = np.zeros((config.RESOLUTIONS[config.USED_RESOLUTION_INDEX]['width'],
+                            config.RESOLUTIONS[config.USED_RESOLUTION_INDEX]['height'],
+                            3))
                 else:
                     index = 0
                     changed_camera = True
