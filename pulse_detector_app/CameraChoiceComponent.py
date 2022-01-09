@@ -81,7 +81,7 @@ class CameraChoiceComponent:
                 if index == 0:
                     frame = np.zeros((config.RESOLUTIONS[config.USED_RESOLUTION_INDEX]['width'],
                             config.RESOLUTIONS[config.USED_RESOLUTION_INDEX]['height'],
-                            3))
+                            3), dtype=np.uint8)
                 else:
                     index = 0
                     changed_camera = True
