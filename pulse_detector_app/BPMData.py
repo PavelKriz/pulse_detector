@@ -74,9 +74,9 @@ class BPMData:
         else:
             self.bpm = 0.99 * self.bpm + 0.01 * bpm
 
-        print("     fps: %f" % self.fps)
-        print("     bpm: %f" % bpm)
-        print("self.bpm: %f" % self.bpm)
+        #rint("     fps: %f" % self.fps)
+        #print("     bpm: %f" % bpm)
+        #print("self.bpm: %f" % self.bpm)
 
     def plot(self):
         if not self.initial_conditions():
