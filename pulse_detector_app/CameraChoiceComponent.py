@@ -79,8 +79,8 @@ class CameraChoiceComponent:
             ret, frame = self.cap.read()
             if not ret:
                 if index == 0:
-                    frame = np.zeros((config.RESOLUTIONS[config.USED_RESOLUTION_INDEX]['width'],
-                            config.RESOLUTIONS[config.USED_RESOLUTION_INDEX]['height'],
+                    frame = np.zeros((config.RESOLUTIONS[config.USED_RESOLUTION_INDEX]['height'],
+                            config.RESOLUTIONS[config.USED_RESOLUTION_INDEX]['width'],
                             3), dtype=np.uint8)
                 else:
                     index = 0
