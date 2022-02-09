@@ -3,7 +3,10 @@ import collections
 import numpy as np
 from pulse_detector_app import BPMPlotter
 
+
+# class that works with scanned data - stores them (it is a sort of buffer container) and analysis them
 class BPMData:
+    # constructor, size is the size of data buffer
     def __init__(self, size=250):
         self.t0 = time.time()
         self.bufferSize = size
@@ -15,7 +18,7 @@ class BPMData:
         self.bpm = 0
         self.bpm_plotter = BPMPlotter.BPMPlotterWrapper()
 
-
+    # method that is supposed to be used to insert data and remove old ones
     def put(self, data_val):
         self.dataBuffer.append(data_val)
         self.timeBuffer.append(time.time() - self.t0)
@@ -23,26 +26,26 @@ class BPMData:
             self.dataBuffer.popleft()
             self.timeBuffer.popleft()
 
+    # checking the minimal length for analysis
     def initial_conditions(self):
         length = len(self.timeBuffer)
         if length < 40:
             return False
         return True
 
+    # the analysis of the data
     def analyze(self):
         if not self.initial_conditions():
             return
 
+        # calc the time data
         length = len(self.timeBuffer)
         time_elapsed = self.timeBuffer[length - 1] - self.timeBuffer[0]
         self.fps = float(length) / time_elapsed
-        #print("length: %f time end: %f time begin: %f" % (float(length), self.timeBuffer[-1], self.timeBuffer[0]))
-        #print("fps %f" % self.fps)
 
         data = np.array(self.dataBuffer)
         equidist_times = np.linspace(self.timeBuffer[0], self.timeBuffer[-1], length)
         equidist_data = np.interp(equidist_times, self.timeBuffer, data)
-        # interpolated2 = np.hamming(length) * interpolated
         # because of what says the Shannon theorem length / 2 + 1 frequencies bin is return
         # Oficial doc: If n is even, the length of the transformed axis is (n/2)+1. If n is odd, the length is (n+1)/2.
         np_fft = np.fft.rfft(equidist_data)
@@ -74,10 +77,7 @@ class BPMData:
         else:
             self.bpm = 0.99 * self.bpm + 0.01 * bpm
 
-        #rint("     fps: %f" % self.fps)
-        #print("     bpm: %f" % bpm)
-        #print("self.bpm: %f" % self.bpm)
-
+    # plotting the data individually in separate window
     def plot(self):
         if not self.initial_conditions():
             return

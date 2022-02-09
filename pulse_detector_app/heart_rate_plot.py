@@ -3,9 +3,9 @@ import cv2
 import numpy as np
 from numpy import interp
 import sys
-import random
 
 
+# deprecated
 class GraphData:
     def __init__(self, x_size, label, color):
         self.x_size = x_size
@@ -21,6 +21,7 @@ class GraphData:
         self.min_val = min(self.min_val, int(val))
         while len(self.data) > self.x_size:
             self.data.popleft()
+
 
 # Plot values in opencv program
 class Plotter:
@@ -72,6 +73,7 @@ class Plotter:
 
 
 '''
+TESTING PROCEDURE
 plotter = Plotter(1200, 300, 10)
 plotter.add_graph(0, "Test graph1", (0, 255, 0))
 plotter.add_graph(1, "Test graph2", (125, 125, 0))

@@ -2,6 +2,8 @@
 
 FPS = 30.0
 
+# some prepared resolutions - two types of ratios 16:9 and 4:3
+
 # resolution 0
 RES0 = {'width': 640, 'height': 480, 'font_scale': 0.6}
 # resolution 1

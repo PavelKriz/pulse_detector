@@ -4,6 +4,7 @@ from numpy import interp
 from pulse_detector_app import Window
 
 
+# wrapper around the plotter that wraps the plotter and adds the plotting into Window
 class BPMPlotterWrapper:
     def __init__(self, width=640, height=480):
         self.width = width
@@ -31,6 +32,11 @@ class BPMPlotter:
         self.font = cv2.FONT_HERSHEY_SIMPLEX
         self.font_scale = 1.0
 
+    # plotting the data into a given frame (frame_to_draw)
+    # bpm - number, estimated pulse
+    # raw_data - scanned averages from the face
+    # amplitudes, frequencies - data for the interesting part to plot (something around 55-170)
+    # amplitudes are given for their frequencies
     def plot(self, frame_to_draw, bpm, raw_data, amplitudes, frequencies):
         min_val = min(raw_data)
         max_val = max(raw_data)
@@ -96,8 +102,7 @@ class BPMPlotter:
                     self.font_scale * 0.6, self.color, 1)
         cv2.line(frame_to_draw, (0, freq_ampl_legend_bottom2), (width, freq_ampl_legend_bottom2), self.color, 1)
 
-
-        # bpm
+        # draw the bpm number information
         legend_top = freq_ampl_legend_bottom2
         legend_bottom = legend_top + int(height * self.legend_relative_height)
         bpm_str = "Your pulse estimation is: %d bpm" % bpm
@@ -105,45 +110,10 @@ class BPMPlotter:
                     self.font,
                     self.font_scale, self.color, 1)
 
-
         return
 
-    '''
-    def add_graph(self, graph_id, label, color):
-        self.graphs.update([(graph_id, GraphData(self.plot_size, label, color))])
-
-    def update(self, graph_id, val):
-        self.graphs.get(graph_id).put(val)
-    
-
-    # Update new values in plot
-    def plot_graphs(self, label="Plot"):
-        self.plot = np.ones(self.plot.shape, self.plot.dtype) * 255
-        self.__draw_plot(label)
-
-    # Show plot using opencv imshow
-    def __draw_plot(self, label):
-        cv2.line(self.plot, (0, int(self.graph_bottom)), (self.width, int(self.graph_bottom)), (0, 0, 255), 1)
-
-        textOffset = 0
-        for gd in self.graphs.values():
-            cv2.putText(self.plot, gd.label, (textOffset, self.height - self.bottom_text_offset),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1.0, gd.color, 1)
-            textSize = cv2.getTextSize(gd.label, cv2.FONT_HERSHEY_SIMPLEX, 1.0, 1)
-            textOffset += textSize[0][0] + self.labelOffsets
-            for i in range(len(gd.data) - 1):
-                first = int(interp(gd.data[i], [gd.min_val, gd.max_val], [0, self.graph_bottom]))
-                second = int(interp(gd.data[i + 1], [gd.min_val, gd.max_val], [0, self.graph_bottom]))
-                cv2.line(self.plot, (i * self.step_size, int(self.graph_bottom - first)), ((i + 1) * self.step_size,
-                                                                                          int(self.graph_bottom - second)),
-                                     gd.color, 1)
-
-        cv2.imshow(label, self.plot)
-        cv2.waitKey(1)
-    '''
-
 '''
+TESTING PROCEDURE  
 array = []
 maxVal = random.randint(50, 150)
 for v in range(0, maxVal, 10):
