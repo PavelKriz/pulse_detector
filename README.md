@@ -1,7 +1,4 @@
 # Pulse Detector
-<img src="images/Pulse_detector.png"
-             width="60%">
-
 ## Idea
 Main idea is about creating application in Python, that would detect and display the pulse frequency. The output values are between 55 and 170 for one person.
 	
@@ -9,7 +6,7 @@ Main idea is about creating application in Python, that would detect and display
 The application looks like this:
 
 <img src="images/Pulse_detector.png"
-            width="50%">
+            width="80%">
 	
 In the previous image can be seen the main part of the application, which is displayed in two windwos. The camera settings is easy and with the face locking mechanism is visible on the next images: 
 
@@ -36,7 +33,7 @@ On this image the innacuracy is visible. The overall is wrong, but at the moment
              width="30%">
 	
 ## Installation and run
-The `Python 3` is needed with the installed package `opencv-python`. To run the program it is needed to type `python3 ./pulse_detector.py` in the correct folder in terminal.
+The `Python 3` is needed with the installed package `opencv-python` (tested with version 4). To run the program it is needed to type `python3 ./pulse_detector.py` in the correct folder in terminal.
 
 ## Other already created solutions at the time
 There are already existing solutions for that, one of them is <a href="https://github.com/thearn/webcam-pulse-detector">webcam-pulse-detector</a>. That one is in Python, but there is also one in <a href="https://github.com/serghov/heartRate">Javascript</a>. Most detectors (our as well) uses forehead as detecting zone, but <a href="https://www.youtube.com/watch?v=IV51CYZsBOU">this one</a> uses cheeks. 
